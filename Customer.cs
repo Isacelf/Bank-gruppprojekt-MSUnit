@@ -18,7 +18,7 @@ namespace Bank_gruppprojekt
 
         public static List<Customer> Customers;
 
-        private List<string> logActivity = new List<string>();        
+        private List<string> logActivity = new List<string>();
 
         private double totalBorrowedAmount = 0;
 
@@ -34,12 +34,12 @@ namespace Bank_gruppprojekt
         {
 
             Customers = new List<Customer>
-        {
-            new Customer("Ermin", "1111"),
-            new Customer("Oskar", "1234"),
-            new Customer("Ludde", "3545"),
-            new Customer("Isac", "4355")
-        };
+    {
+        new Customer("Ermin", "1111"),
+        new Customer("Oskar", "1234"),
+        new Customer("Ludde", "3545"),
+        new Customer("Isac", "4355")
+    };
 
             Customers[0].Accounts.Add(new Account("USA-account", 2000, "USD"));
             Customers[0].Accounts.Add(new Account("Household", 52000, "SEK"));
@@ -64,29 +64,25 @@ namespace Bank_gruppprojekt
         {
             Username = userName;
             Pin = pin;
-            Accounts = new List<Account>();            
-        }      
+            Accounts = new List<Account>();
+        }
+
 
         public static void AddUser(Customer customer)
         {
             Customers.Add(customer);
         }
 
-        public static void Deposit(Customer currentCustomer)
+        public static void Deposit(Customer currentCustomer, int accountIndex, double deposit)
         {
-            Console.WriteLine("Which account do you want to deposit into?");
-            currentCustomer.DisplayAccounts(currentCustomer);
-
-            if (int.TryParse(Console.ReadLine(), out int accountIndex) && accountIndex > 0 && accountIndex <= currentCustomer.Accounts.Count)
+            if (accountIndex > 0 && accountIndex <= currentCustomer.Accounts.Count)
             {
-                Console.WriteLine("How much money do you want to deposit?");
-                if (double.TryParse(Console.ReadLine(), out double deposit))
+                if (deposit > 0)
                 {
                     currentCustomer.Accounts[accountIndex - 1].Balance += deposit;
                     Console.WriteLine($"Your new balance for {currentCustomer.Accounts[accountIndex - 1].Accounttype} account is {currentCustomer.Accounts[accountIndex - 1].Balance}{currentCustomer.Accounts[accountIndex - 1].Currency}");
 
                     currentCustomer.LogDeposit(deposit, currentCustomer.Accounts[accountIndex - 1].Currency, currentCustomer.Accounts[accountIndex - 1]);
-
                 }
                 else
                 {
@@ -97,10 +93,8 @@ namespace Bank_gruppprojekt
             {
                 Console.WriteLine("Invalid account selection.");
             }
-            Console.WriteLine("\nPress enter to exit to Menu");
-            Console.ReadLine();
-            //Console.Clear();
         }
+
         public void CreateAccount(string accountType, double initialBalance, string currency)
         {            
             Account newAccount = new Account(accountType, initialBalance, currency);
@@ -130,48 +124,49 @@ namespace Bank_gruppprojekt
         }
 
 
-        public static void Withdraw(Customer currentCustomer)
+        public static void Withdraw(Customer currentCustomer, int accountIndex, double withdrawal)
         {
-            Console.WriteLine("Which account do you want to withdraw from?");
-            currentCustomer.DisplayAccounts(currentCustomer);
-
-            if (int.TryParse(Console.ReadLine(), out int accountIndex) && accountIndex > 0 && accountIndex <= currentCustomer.Accounts.Count)
+            if (accountIndex > 0 && accountIndex <= currentCustomer.Accounts.Count)
             {
-                Console.WriteLine("How much do you want to withdraw?");
-                if (double.TryParse(Console.ReadLine(), out double withdrawal))
+                if (withdrawal <= 0)
                 {
-                    if (currentCustomer.Accounts[accountIndex - 1].Balance < withdrawal)
-                    {
-                        Console.WriteLine("Insufficient funds");
-                    }
-                    else
-                    {
-                        currentCustomer.Accounts[accountIndex - 1].Balance -= withdrawal;
-                        Console.WriteLine($"Thank you for the withdrawal. Your new balance for {currentCustomer.Accounts[accountIndex - 1].Accounttype} account is {currentCustomer.Accounts[accountIndex - 1].Balance}{currentCustomer.Accounts[accountIndex - 1].Currency}");
-                        currentCustomer.LogWithdraw(withdrawal, currentCustomer.Accounts[accountIndex - 1].Currency, currentCustomer.Accounts[accountIndex - 1]);
-                    }
+                    // Invalid amount, no withdrawal performed.
+                    return;
+                }
+
+                if (currentCustomer.Accounts[accountIndex - 1].Balance < withdrawal)
+                {
+                    // Insufficient funds, no withdrawal performed.
+                    return;
                 }
                 else
                 {
-                    Console.WriteLine("Invalid input. Please enter a valid number.");
+                    currentCustomer.Accounts[accountIndex - 1].Balance -= withdrawal;
+                    currentCustomer.LogWithdraw(withdrawal, currentCustomer.Accounts[accountIndex - 1].Currency, currentCustomer.Accounts[accountIndex - 1]);
                 }
             }
             else
             {
-                Console.WriteLine("Invalid account selection.");
+                // Invalid account selection, no withdrawal performed.
+                return;
             }
-            Console.WriteLine("\nPress enter to exit to Menu");
-            Console.ReadLine();
-            //Console.Clear();
         }
 
+
+
         public static void ShowBalance(Customer currentCustomer)
-        {        
-            currentCustomer.DisplayAccounts(currentCustomer);
+        {
+            Console.WriteLine("Accounts:");
+            for (int i = 0; i < currentCustomer.Accounts.Count; i++)
+            {
+                var account = currentCustomer.Accounts[i];
+                Console.WriteLine($"{i + 1}. [{account.Accounttype}] {account.Balance} {account.Currency}");
+            }
             Console.WriteLine("\nPress enter to exit to Login");
             Console.ReadLine();
             Console.Clear();
         }
+
 
         public static List<Customer> GetCustomerWithAccounts()
         {
@@ -212,10 +207,44 @@ namespace Bank_gruppprojekt
                         switch (option)
                         {
                             case 1:
-                                Deposit(currentCustomer);
+                                Console.WriteLine("Which account do you want to deposit into?");
+                                currentCustomer.DisplayAccounts(currentCustomer);
+                                if (int.TryParse(Console.ReadLine(), out int accountIndex) && accountIndex > 0 && accountIndex <= currentCustomer.Accounts.Count)
+                                {
+                                    Console.WriteLine("How much money do you want to deposit?");
+                                    if (double.TryParse(Console.ReadLine(), out double deposit))
+                                    {
+                                        Deposit(currentCustomer, accountIndex, deposit);
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Invalid input. Please enter a valid number.");
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Invalid account selection.");
+                                }
                                 break;
                             case 2:
-                                Withdraw(currentCustomer);
+                                Console.WriteLine("Which account do you want to withdraw from?");
+                                currentCustomer.DisplayAccounts(currentCustomer);
+                                if (int.TryParse(Console.ReadLine(), out accountIndex) && accountIndex > 0 && accountIndex <= currentCustomer.Accounts.Count)
+                                {
+                                    Console.WriteLine("How much do you want to withdraw?");
+                                    if (double.TryParse(Console.ReadLine(), out double withdrawal))
+                                    {
+                                        Withdraw(currentCustomer, accountIndex, withdrawal);
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Invalid input. Please enter a valid number.");
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Invalid account selection.");
+                                }
                                 break;
                             case 3:
                                 ShowBalance(currentCustomer);
@@ -355,19 +384,15 @@ namespace Bank_gruppprojekt
 
                     if (int.TryParse(Console.ReadLine(), out int toAccountIndex) && toAccountIndex > 0 && toAccountIndex <= currentCustomer.Accounts.Count)
                     {
-                        
                         if (fromAccountIndex != toAccountIndex)
                         {
-                            
                             string sourceCurrency = currentCustomer.Accounts[fromAccountIndex - 1].Currency;
                             string targetCurrency = currentCustomer.Accounts[toAccountIndex - 1].Currency;
 
-                            
                             if ((sourceCurrency == "SEK" || sourceCurrency == "USD") && (targetCurrency == "SEK" || targetCurrency == "USD"))
                             {
-                                double convertedAmount = transferAmount; 
+                                double convertedAmount = transferAmount;
 
-                               
                                 if (sourceCurrency != targetCurrency)
                                 {
                                     double sourceToTargetRate = Administrator.GetExchangeRate(sourceCurrency, targetCurrency);
@@ -400,8 +425,6 @@ namespace Bank_gruppprojekt
                                     Console.WriteLine("Press enter to exit to Menu");
                                     Console.ReadLine();
                                     Console.Clear();
-
-
                                 }
                             }
                             else
@@ -429,6 +452,7 @@ namespace Bank_gruppprojekt
                 Console.WriteLine("Invalid account selection for transferring money.");
             }
         }
+
 
         private static async Task TransferToAnotherUser(Customer currentCustomer)
         {

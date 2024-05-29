@@ -102,7 +102,6 @@ namespace Bank_gruppprojekt
             Console.Clear();
         }
 
-
         public Customer CreateUser(string username, string pin)
         {
             if (string.IsNullOrWhiteSpace(username) || username.Count(char.IsLetter) < 2 || pin.Length != 4 || !pin.All(char.IsDigit))
@@ -123,6 +122,7 @@ namespace Bank_gruppprojekt
 
             return newUser;
         }
+
 
         public void AdminDeleteAccount(Administrator currentAdmin)
         {
