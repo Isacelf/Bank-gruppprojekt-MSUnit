@@ -15,12 +15,11 @@
   - Uttag av mer pengar än vad som finns på kontot (otillräckliga medel).
   - Uttag från ett icke-existerande konto.
 
-### CreateUser
-- **Affärskritisk del:** Skapande av en ny användare.
+### InitializeUsers
+- **Affärskritisk del:** Initialisering av användare i systemet.
 - **Möjliga fel:** 
-  - Ogiltigt användarnamn (mindre än två bokstäver).
-  - Ogiltig PIN-kod (inte exakt fyra siffror).
-  - Användarnamn redan taget.
+  - Felaktigt antal användare initialiseras.
+  - Felaktiga användarnamn eller pinkoder tilldelas användarna.
 
 ## Tester
 
@@ -28,4 +27,5 @@ För att säkerställa att dessa affärskritiska delar fungerar korrekt har vi i
 
 - Tester för `Deposit`-metoden kontrollerar att insättning till rätt konto ökar saldot, samt att felaktiga konton eller belopp inte påverkar saldot.
 - Tester för `Withdraw`-metoden kontrollerar att uttag från rätt konto minskar saldot, samt att otillräckliga medel eller felaktiga konton inte påverkar saldot.
-- Tester för `CreateUser`-metoden kontrollerar att användare med giltiga uppgifter skapas korrekt, samt att ogiltiga uppgifter eller redan använda användarnamn inte tillåts.
+- Tester för `InitializeUsers`-metoden säkerställer att rätt antal användare initialiseras och att korrekta användarnamn och pinkoder tilldelas dem.
+
