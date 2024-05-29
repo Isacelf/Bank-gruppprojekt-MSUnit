@@ -28,4 +28,3 @@ För att säkerställa att dessa affärskritiska delar fungerar korrekt har vi i
 - Tester för `Deposit`-metoden kontrollerar att insättning till rätt konto ökar saldot, samt att felaktiga konton eller belopp inte påverkar saldot.
 - Tester för `Withdraw`-metoden kontrollerar att uttag från rätt konto minskar saldot, samt att otillräckliga medel eller felaktiga konton inte påverkar saldot.
 - Tester för `InitializeUsers`-metoden säkerställer att rätt antal användare initialiseras och att korrekta användarnamn och pinkoder tilldelas dem.
-
